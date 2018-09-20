@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, View, Text,Image,StyleSheet,TouchableOpacity,ImageBackground } from 'react-native';
 import { Footer } from "native-base";
 
-export class ContactScreen extends React.Component {
+export class InfoScreen extends React.Component {
     render() {
         return (
 
@@ -14,28 +14,11 @@ export class ContactScreen extends React.Component {
                         <TouchableOpacity style={styles.buttonContainer}
                                           onPress={() => this.props.navigation.navigate('Home')}>
 
-                            <Text  style={styles.buttonStyle}>HOME</Text>
+                            <Text  style={styles.buttonStyle}>MESSAGES</Text>
 
                         </TouchableOpacity>
                     </ImageBackground>
 
-                    <ImageBackground source={require('../resources/mail.png')} style={styles.buttonImage}>
-                        <TouchableOpacity style={styles.buttonContainer}
-                                          onPress={() => this.props.navigation.navigate('Chats')}>
-
-                            <Text  style={styles.buttonStyle}>CONTACTS</Text>
-
-                        </TouchableOpacity>
-                    </ImageBackground>
-
-                    <ImageBackground source={require('../resources/halp.png')} style={styles.buttonImage}>
-                        <TouchableOpacity style={styles.buttonContainer}
-                                          onPress={() => this.props.navigation.navigate('Info')}>
-
-                            <Text  style={styles.buttonStyle}>INFO</Text>
-
-                        </TouchableOpacity>
-                    </ImageBackground>
                 </View>
 
             </ImageBackground>

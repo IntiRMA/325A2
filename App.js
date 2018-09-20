@@ -7,6 +7,7 @@ import {RegisterScreen} from "./pages/register";
 import {AddFriendScreen} from "./pages/addfriend";
 import {ContactScreen} from "./pages/contacts";
 import {LoadingScreen} from "./pages/loading";
+import {InfoScreen} from "./pages/info";
 
 
 
@@ -18,7 +19,8 @@ const RootStack = createStackNavigator({
         Register:RegisterScreen,
         Add:AddFriendScreen,
         Contact:ContactScreen,
-        Loading:LoadingScreen
+        Loading:LoadingScreen,
+        Info:InfoScreen
 },
     {
       IntialName: 'Login',
