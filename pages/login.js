@@ -1,13 +1,29 @@
 
 import React from 'react'
 import { StyleSheet, Text, TextInput, View, Button,TouchableOpacity } from 'react-native'
-import login from "../services/loginService"
+import firebase from "../fbconfig/fbase";
 
 export class LoginScreen extends React.Component {
     state = { email: '', password: '', errorMessage: null }
     handleSignUp=()=> {
-        console.log(this.state.email);
-        login(this.state.email, this.state.password);
+        this.props.navigation.navigate('Loading');
+            firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
+                .then((user) => {
+                    this.props.navigation.navigate('Home')
+                })
+                .catch((error) => {
+
+                    Alert.alert(
+                        'boi',
+                        error.message,
+                        [
+                            {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
+                            {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                            {text: 'OK', onPress: () => console.log('OK Pressed')},
+                        ],
+                        { cancelable: false }
+                    )
+                });
    }
 
     render() {

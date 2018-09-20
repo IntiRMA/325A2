@@ -1,23 +1,48 @@
 
 import React from 'react';
 import { StyleSheet, Text, TextInput, View, Button,TouchableOpacity,Alert } from 'react-native';
-import register from "../services/registerService";
+import firebase from "../fbconfig/fbase";
 
 export class RegisterScreen extends React.Component {
     state = { email: '', password: '', errorMessage: null }
     handleRegister=()=> {
-        Alert.alert(
-            'boi',
-            this.state.email,
-            [
-                {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
-                {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                {text: 'OK', onPress: () => console.log('OK Pressed')},
-            ],
-            { cancelable: false }
-        )
-        register(this.state.email, this.state.password);
-        this.props.navigation.navigate('Home')
+        this.props.navigation.navigate('Loading');
+        firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
+            .then((user) => {
+                firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
+                    .then((user) => {
+                        this.props.navigation.navigate('Home')
+                    })
+                    .catch((error) => {
+
+                        Alert.alert(
+                            'boi',
+                            error.message,
+                            [
+                                {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
+                                {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                                {text: 'OK', onPress: () => console.log('OK Pressed')},
+                            ],
+                            { cancelable: false }
+                        )
+                        this.props.navigation.navigate('Register');
+                    });
+
+            })
+            .catch((error) => {
+
+                Alert.alert(
+                    'boi',
+                    error.message,
+                    [
+                        {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
+                        {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                        {text: 'OK', onPress: () => console.log('OK Pressed')},
+                    ],
+                    { cancelable: false }
+                )
+                this.props.navigation.navigate('Register');
+            });
     }
 
     render() {

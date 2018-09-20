@@ -6,6 +6,7 @@ import {ChatScreen} from "./pages/chats";
 import {RegisterScreen} from "./pages/register";
 import {AddFriendScreen} from "./pages/addfriend";
 import {ContactScreen} from "./pages/contacts";
+import {LoadingScreen} from "./pages/loading";
 
 
 
@@ -16,7 +17,8 @@ const RootStack = createStackNavigator({
         Chats:ChatScreen,
         Register:RegisterScreen,
         Add:AddFriendScreen,
-        Contact:ContactScreen
+        Contact:ContactScreen,
+        Loading:LoadingScreen
 },
     {
       IntialName: 'Login',
