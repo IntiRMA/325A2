@@ -14,7 +14,14 @@ export class InfoScreen extends React.Component {
                         <TouchableOpacity style={styles.buttonContainer}
                                           onPress={() => this.props.navigation.navigate('Home')}>
 
-                            <Text  style={styles.buttonStyle}>MESSAGES</Text>
+                            <Text  style={styles.buttonStyle}>HOME</Text>
+
+                        </TouchableOpacity>
+                    </ImageBackground>
+
+                    <ImageBackground source={require('../resources/logout.png')} style={styles.bottomView}>
+                        <TouchableOpacity style={styles.bottomView}
+                                          onPress={() => this.props.navigation.navigate('Login')}>
 
                         </TouchableOpacity>
                     </ImageBackground>
@@ -60,5 +67,17 @@ const styles = StyleSheet.create({
         color: '#0f0',
         textAlign: 'center',
         fontWeight: '700'
+    },
+    bottomView:{
+        opacity:0.7,
+        flex:1,
+        width: 50,
+        height: 50,
+        resizeMode:'cover',
+        alignItems:'baseline',
+        justifyContent: 'center',
+        position: 'absolute',
+        bottom: 0
+
     }
 });

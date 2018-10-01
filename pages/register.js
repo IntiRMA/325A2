@@ -11,15 +11,28 @@ export class RegisterScreen extends React.Component {
             .then((user) => {
                 firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
                     .then((user) => {
+                        firebase.database().ref('users/'+firebase.auth().currentUser.uid).set({
+                            email: this.state.email,
+                            uid: firebase.auth().currentUser.uid,
+                        }).catch((error) => {
+                            Alert.alert(
+                                'Registering Error',
+                                error.message,
+                                [
+                                    {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                                    {text: 'OK', onPress: () => console.log('OK Pressed')},
+                                ],
+                                { cancelable: false }
+                            )
+                        });
                         this.props.navigation.navigate('Home')
                     })
                     .catch((error) => {
 
                         Alert.alert(
-                            'boi',
+                            'Registering Error',
                             error.message,
                             [
-                                {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
                                 {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
                                 {text: 'OK', onPress: () => console.log('OK Pressed')},
                             ],
@@ -32,10 +45,9 @@ export class RegisterScreen extends React.Component {
             .catch((error) => {
 
                 Alert.alert(
-                    'boi',
+                    'Registering Error',
                     error.message,
                     [
-                        {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
                         {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
                         {text: 'OK', onPress: () => console.log('OK Pressed')},
                     ],

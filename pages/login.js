@@ -1,6 +1,6 @@
 
 import React from 'react'
-import { StyleSheet, Text, TextInput, View, Button,TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Button,TouchableOpacity,Alert } from 'react-native'
 import firebase from "../fbconfig/fbase";
 
 export class LoginScreen extends React.Component {
@@ -12,14 +12,12 @@ export class LoginScreen extends React.Component {
                     this.props.navigation.navigate('Home')
                 })
                 .catch((error) => {
-
                     Alert.alert(
-                        'boi',
+                        'Login Error',
                         error.message,
                         [
-                            {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
-                            {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                            {text: 'OK', onPress: () => console.log('OK Pressed')},
+                            {text: 'Cancel', onPress: () => this.props.navigation.navigate('Login'), style: 'cancel'},
+                            {text: 'OK', onPress: () => this.props.navigation.navigate('Login')},
                         ],
                         { cancelable: false }
                     )

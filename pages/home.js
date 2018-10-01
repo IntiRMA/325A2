@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button, View, Text,Image,StyleSheet,TouchableOpacity,ImageBackground } from 'react-native';
-import { Footer } from "native-base";
 
 export class HomeScreen extends React.Component {
     render() {
@@ -33,6 +32,12 @@ export class HomeScreen extends React.Component {
                                               onPress={() => this.props.navigation.navigate('Info')}>
 
                                 <Text  style={styles.buttonStyle}>INFO</Text>
+
+                            </TouchableOpacity>
+                        </ImageBackground>
+                        <ImageBackground source={require('../resources/logout.png')} style={styles.bottomView}>
+                            <TouchableOpacity style={styles.bottomView}
+                                              onPress={() => this.props.navigation.navigate('Login')}>
 
                             </TouchableOpacity>
                         </ImageBackground>
@@ -77,5 +82,17 @@ const styles = StyleSheet.create({
         color: '#0f0',
         textAlign: 'center',
         fontWeight: '700'
+    },
+    bottomView:{
+        opacity:0.7,
+        flex:1,
+        width: 50,
+        height: 50,
+        resizeMode:'cover',
+        alignItems:'baseline',
+        justifyContent: 'center',
+        position: 'absolute',
+        bottom: 0
+
     }
 });
