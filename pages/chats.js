@@ -16,23 +16,20 @@ export class ChatScreen extends React.Component {
 
     async componentDidMount(){
         let current=firebase.auth().currentUser.uid;
-        await firebase.database().ref('/users/'+current+"/chats").once('value').then(snapshot=>{
+        await firebase.database().ref("/userChats").child(current).once('value').then(snapshot=>{
             snapshot.forEach(child=>{
                     this.state.chats.push({
-                        key: child.key,
-                        id:child.val().id,
-                        title:child.val().title,
-                        messegages:child.val().messegages
+                        id: child.key,
+                        title:'chat with: '+child.val().title
                     })
 
             })
         });
-        console.log(this.state.chats.length+"DAMMM");
         this.setState({isLoading:false});
     }
 
-    pushConvo(user){
-        return;
+    pushConvo(chat){
+        this.props.navigation.navigate("Message",{id:chat.id});
     }
 
     render() {
@@ -59,6 +56,15 @@ export class ChatScreen extends React.Component {
 
                         </TouchableOpacity>
                     </ImageBackground>
+                    
+                    <ImageBackground source={require('../resources/halp.png')} style={styles.buttonImage}>
+                        <TouchableOpacity style={styles.buttonContainer}
+                                          onPress={() => this.props.navigation.navigate('Info')}>
+
+                            <Text  style={styles.buttonStyle}>INFO</Text>
+
+                        </TouchableOpacity>
+                    </ImageBackground>
 
                 </View>
                 <View style={styles.friendsView}>
@@ -69,7 +75,7 @@ export class ChatScreen extends React.Component {
                         keyExtractor={item=>item.id}
                         renderItem={({item}) => (
                             <TouchableOpacity style={styles.textContainer}
-                                              onPress={this.pushConvo(item)}>
+                                              onPress={this.pushConvo.bind(this,item)}>
                                 <Text stye={styles.buttonStyle}>{item.title}</Text>
                             </TouchableOpacity>
                         )
@@ -81,9 +87,9 @@ export class ChatScreen extends React.Component {
 
 
                 <View style={styles.viewStyle}>
-                    <ImageBackground source={require('../resources/add.png')} style={styles.bottomView}>
+                    <ImageBackground source={require('../resources/logout.png')} style={styles.bottomView}>
                         <TouchableOpacity style={styles.bottomView}
-                                          onPress={() => this.props.navigation.navigate('Add')}>
+                                          onPress={() => this.props.navigation.navigate('Login')}>
 
                         </TouchableOpacity>
                     </ImageBackground>

@@ -1,75 +1,106 @@
 import React from 'react';
-import firebase from "../fbconfig/fbase";
-import { GiftedChat } from 'react-native-gifted-chat'
+import { GiftedChat,SystemMessage, Bubble} from 'react-native-gifted-chat';
+import {View,Platform,StyleSheet,Text,TouchableOpacity} from "react-native";
+import backEnd from "../backend/chatBackEnd";
 export class MessegeScreen extends React.Component {
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state = {
-            messages: [],
-            isLoading: true,
-            ID:null
-
+            messages: []
         };
+        this.renderBubble = this.renderBubble.bind(this);
+        this.renderSystemMessage = this.renderSystemMessage.bind(this);
     }
-    async componentDidMount(){
-        if(this.props.navigation.state.params.ID!==undefined){
-            this.setState({ID:this.props.navigation.state.params.ID});
-        }
-        console.log("BOIIIIIIIII"+this.state.ID);
-        await firebase.database().ref('/users/'+firebase.auth().currentUser.uid+"/chats/"+this.state.ID+"/messages").once('value').then(snapshot=>{
-            snapshot.forEach(child=>{
-
-                this.state.messages.push({
-
-                    _id: this.state.id,
-                        text:child.text,
-                    createdAt:child.date,
-                    user: {
-                    _id: firebase.auth().currentUser.uid,
-                        name: 'React Native',
-                        avatar: 'https://facebook.github.io/react/img/logo_og.png',
-                },
-                    image: 'https://facebook.github.io/react/img/logo_og.png',
-                    // Any additional custom parameters are passed through
-
-                })
-
+    componentDidMount(){
+        const id=this.props.navigation.getParam('id',null);
+        backEnd.load(id,(message)=>{
+            this.setState((previousState)=>{
+                return {
+                    messages:GiftedChat.append(previousState.messages,message)
+                }
             })
         });
-        this.setState({isLoading:false});
     }
-    send(message){
-        if(this.props.navigation.state.params.ID!==undefined){
-            this.setState({ID:this.props.navigation.state.params.ID});
-        }
-        console.log("BOIIIIIIIII"+this.state.ID);
-        console.log(message);
-        this.state.messages.push(message);
-        firebase.database().ref('/users/'+firebase.auth().currentUser.uid+"/chats/"+this.state.ID+"/messages").set({
-            id:message._id,
-            text:message.text,
-            createdAt:new Date(Date.UTC(2016, 5, 11, 17, 20, 0)),
-            user: {
-                _id: firebase.auth().currentUser.uid,
-                name: 'React Native',
-                avatar: 'https://facebook.github.io/react/img/logo_og.png',
-            },
-            image: 'https://facebook.github.io/react/img/logo_og.png',
-            // Any additional custom parameters are passed through
-    });
-        this.componentDidMount();
-
-}
-
-
-    render() {
-        console.log("BOIIIIIIIII"+this.state.Id);
-        // 4.
+    componentWillUnmount(){
+        backEnd.closeChat();
+    }
+    renderBubble(props) {
         return (
-            <GiftedChat
-                messages={this.state.messages}
-                onSend={message=>this.send(message)}
+            <View>
+                <Text style={styles.name}>{props.currentMessage.user.name}</Text>
+                <Bubble
+                    {...props}
+                />
+            </View>
+        );
+    }
+
+    renderSystemMessage(props) {
+        return (
+            <SystemMessage
+                {...props}
+                containerStyle={{
+                    marginBottom: 15,
+                }}
+                textStyle={{
+                    fontSize: 14,
+                }}
             />
         );
     }
+
+
+    render() {
+        return (
+            <View style={{flex:1}}>
+                <TouchableOpacity style={[styles.buttonContainer, styles.button]} onPress={() => this.props.navigation.navigate('Home')}>
+                   <Text>BACK</Text>
+                </TouchableOpacity>
+                <GiftedChat
+                    messages={this.state.messages}
+                    onSend={(message) => {
+                        backEnd.send(message);
+                    }}
+                    user={{
+                        _id: backEnd.getId(),
+                        name: backEnd.getName(),
+                        avatar: backEnd.getAvatar(),
+                    }}
+                    renderBubble={this.renderBubble}
+                    renderSystemMessage={this.renderSystemMessage}
+                />
+            </View>
+
+        );
+    }
+
+
 }
+const styles = StyleSheet.create({
+    footerContainer: {
+        marginTop: 5,
+        marginLeft: 10,
+        marginRight: 10,
+        marginBottom: 10,
+    },
+    footerText: {
+        fontSize: 14,
+        color: '#aaa',
+    },
+    buttonContainer: {
+        height:40,
+        width: 80,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop:20,
+        marginLeft:20,
+        borderRadius:30,
+    },
+    button: {
+        backgroundColor: 'rgba(150,150,150,0.7)',
+    },
+    text: {
+        color: 'white',
+    }
+});

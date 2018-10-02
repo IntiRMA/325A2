@@ -40,6 +40,14 @@ export class AddFriendScreen extends React.Component {
             ,email:user.email});
         firebase.database().ref('users/' + user.id +'/friends/'+ firebase.auth().currentUser.uid).set({id:firebase.auth().currentUser.uid
             ,email:firebase.auth().currentUser.email});
+        let copy=[];
+        for(let i=0;i<this.state.contacts.length;i++){
+            var element=this.state.contacts[i];
+            if(element.id!=user.id){
+                copy.push(element);
+            }
+        }
+        this.setState({contacts:copy});
         this.setState({isLoading:true});
     }
 
@@ -86,7 +94,7 @@ export class AddFriendScreen extends React.Component {
                         keyExtractor={item=>item.id}
                         renderItem={({item}) => (
                             <TouchableOpacity style={styles.textContainer}
-                            onPress={this.add(item)}>
+                            onPress={this.add.bind(this,item)}>
                             <Text stye={styles.buttonStyle}>{item.email}</Text>
                             </TouchableOpacity>
                         )

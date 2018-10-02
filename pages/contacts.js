@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, View, Text,Image,StyleSheet,TouchableOpacity,ImageBackground,FlatList } from 'react-native';
+import { Button, View, Text,Image,StyleSheet,TouchableOpacity,ImageBackground,FlatList,ActivityIndicator } from 'react-native';
 import firebase from '../fbconfig/fbase'
 export class ContactScreen extends React.Component {
 
@@ -32,31 +32,35 @@ export class ContactScreen extends React.Component {
     }
 
    async add(user){
-        let current=await firebase.auth().currentUser.uid;
-        let convoid=current+user.id;
-        await firebase.database().ref('/users/'+current+"/chats").once('value').then(snapshot=>{
-            if(snapshot.hasChild(convoid)){
-                console.log("FIRST: "+convoid);
-                this.props.navigation.navigate("Message",{ID:convoid});
+        console.log(user);
+        let current=await firebase.auth().currentUser;
+        let convoid=current.uid+user.id;
+        let alt=user.id+current.uid;
+        console.log("ALT "+alt);
+        console.log("ID "+convoid);
+        await firebase.database().ref('/chats').once('value').then(snapshot=> {
+
+            if (snapshot.hasChild(convoid)) {
+                this.props.navigation.navigate("Message",{id:convoid});
+                return;
+            }else if(snapshot.hasChild(alt)){
+                this.props.navigation.navigate("Message",{id:alt});
                 return;
             }
-            firebase.database().ref('/users/'+current+"/chats/"+convoid).set({
-                    id:convoid,
-                    title:"chat with: "+user.email,
-                    messages:{
-                        text:"chat",
-                        id:1,
-                        createdAt:1
-                    }
-            });
-    });
-        this.setState({isLoading:true});
+                firebase.database().ref("/chats").child(convoid).set({
+                    id: convoid,
+                    title: user.email + "-" + current.email
+                }).catch();
+                firebase.database().ref("/userChats").child(user.id).child(convoid).set({title: current.email}).catch();
+                firebase.database().ref("/userChats").child(current.uid).child(convoid).set({title: user.email}).catch();
+
+        }
+        );
+        this.props.navigation.navigate("Message",{id:convoid});
     }
 
     render() {
         return (
-
-
             <ImageBackground source={require('../resources/back.jpeg')}
                              style={styles.backgroundImage}>
                 <View style={styles.viewStyle}>
@@ -93,11 +97,11 @@ export class ContactScreen extends React.Component {
 
                     <FlatList
                         data={this.state.contacts}
-                        extraData={this.state.isLoading}
                         keyExtractor={item=>item.id}
+                        extraData={this.state.isLoading}
                         renderItem={({item}) => (
                             <TouchableOpacity style={styles.textContainer}
-                                              onPress={this.add(item)}>
+                                              onPress={this.add.bind(this,item)}>
                                 <Text stye={styles.buttonStyle}>{item.email}</Text>
                             </TouchableOpacity>
                         )
