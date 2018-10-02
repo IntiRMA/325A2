@@ -17,14 +17,21 @@ export class InfoScreen extends React.Component {
 
                         </TouchableOpacity>
                     </ImageBackground>
+                    
 
+                </View>
+                <View style={styles.friendsView}>
+                    <Text style={styles.buttonStyle}>MY SWEN APP</Text>
+                </View>
+
+
+                <View style={styles.viewStyle}>
                     <ImageBackground source={require('../resources/logout.png')} style={styles.bottomView}>
                         <TouchableOpacity style={styles.bottomView}
                                           onPress={() => this.props.navigation.navigate('Login')}>
 
                         </TouchableOpacity>
                     </ImageBackground>
-
                 </View>
 
             </ImageBackground>
