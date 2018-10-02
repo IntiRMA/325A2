@@ -1,27 +1,14 @@
 
 import React from 'react'
 import { StyleSheet, Text, TextInput, View, Button,TouchableOpacity,Alert } from 'react-native'
-import firebase from "../fbconfig/fbase";
-
+import styles from '../styles/logInStyles';
+import loginService from "../services/loginService";
 export class LoginScreen extends React.Component {
     state = { email: '', password: '', errorMessage: null }
+
     handleSignUp=()=> {
         this.props.navigation.navigate('Loading');
-            firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-                .then((user) => {
-                    this.props.navigation.navigate('Home')
-                })
-                .catch((error) => {
-                    Alert.alert(
-                        'Login Error',
-                        error.message,
-                        [
-                            {text: 'Cancel', onPress: () => this.props.navigation.navigate('Login'), style: 'cancel'},
-                            {text: 'OK', onPress: () => this.props.navigation.navigate('Login')},
-                        ],
-                        { cancelable: false }
-                    )
-                });
+        loginService.login(this.state.email,this.state.password,this.props);
    }
 
     render() {
@@ -57,36 +44,3 @@ export class LoginScreen extends React.Component {
         )
     }
 }
-
-// define your styles
-const styles = StyleSheet.create({
-    container: {
-        padding: 20
-    },
-    input:{
-        height: 40,
-        backgroundColor: 'rgba(225,225,225,0.2)',
-        marginBottom: 10,
-        padding: 10,
-        color: '#000'
-    },
-    loginContainer:{
-        backgroundColor: '#383838',
-        paddingVertical: 15,
-        marginBottom:10
-    },
-    registerContainer:{
-        backgroundColor: '#FF2400',
-        paddingVertical: 15,
-        marginBottom:10
-    },
-    login:{
-        color: '#fff',
-        textAlign: 'center',
-        fontWeight: '700'
-    },
-    register:{
-        color: '#000',
-        textAlign: 'center',
-        fontWeight: '700',
-    }});

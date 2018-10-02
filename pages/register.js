@@ -1,66 +1,19 @@
 
 import React from 'react';
 import { StyleSheet, Text, TextInput, View, Button,TouchableOpacity,Alert } from 'react-native';
-import firebase from "../fbconfig/fbase";
-
+import registerService from '../services/registerService';
+import styles from '../styles/pageStyles';
 export class RegisterScreen extends React.Component {
     state = { email: '', password: '', errorMessage: null }
     handleRegister=()=> {
         this.props.navigation.navigate('Loading');
-        firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
-            .then((user) => {
-                firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-                    .then((user) => {
-                        firebase.database().ref('users/'+firebase.auth().currentUser.uid).set({
-                            email: this.state.email,
-                            uid: firebase.auth().currentUser.uid,
-                        }).catch((error) => {
-                            Alert.alert(
-                                'Registering Error',
-                                error.message,
-                                [
-                                    {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                                    {text: 'OK', onPress: () => console.log('OK Pressed')},
-                                ],
-                                { cancelable: false }
-                            )
-                        });
-                        this.props.navigation.navigate('Home')
-                    })
-                    .catch((error) => {
-
-                        Alert.alert(
-                            'Registering Error',
-                            error.message,
-                            [
-                                {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                                {text: 'OK', onPress: () => console.log('OK Pressed')},
-                            ],
-                            { cancelable: false }
-                        )
-                        this.props.navigation.navigate('Register');
-                    });
-
-            })
-            .catch((error) => {
-
-                Alert.alert(
-                    'Registering Error',
-                    error.message,
-                    [
-                        {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                        {text: 'OK', onPress: () => console.log('OK Pressed')},
-                    ],
-                    { cancelable: false }
-                )
-                this.props.navigation.navigate('Register');
-            });
+        registerService.register(this.state.email,this.state.password,this.props);
     }
 
     render() {
         return (
             <View style={styles.container}>
-                <Text>Sign Up</Text>
+                <Text>REGISTER</Text>
                 {this.state.errorMessage &&
                 <Text style={{ color: 'red' }}>
                     {this.state.errorMessage}
@@ -86,26 +39,3 @@ export class RegisterScreen extends React.Component {
         )
     }
 }
-
-// define your styles
-const styles = StyleSheet.create({
-    container: {
-        padding: 20
-    },
-    input:{
-        height: 40,
-        backgroundColor: 'rgba(225,225,225,0.2)',
-        marginBottom: 10,
-        padding: 10,
-        color: '#000'
-    },
-    registerContainer:{
-        backgroundColor: '#49E20E',
-        paddingVertical: 15,
-        marginBottom:10
-    },
-    register:{
-        color: '#fff',
-        textAlign: 'center',
-        fontWeight: '700',
-    }});

@@ -1,6 +1,9 @@
 import React from 'react';
 import { Button, View, Text,Image,StyleSheet,TouchableOpacity,ImageBackground,FlatList } from 'react-native';
 import firebase from '../fbconfig/fbase'
+import styles from '../styles/pageStyles';
+import loadFromFbase from '../services/loadFromFbase';
+import setInFbase from '../services/setInFbase';
 export class AddFriendScreen extends React.Component {
 
     constructor() {
@@ -13,33 +16,27 @@ export class AddFriendScreen extends React.Component {
     }
 
    async componentDidMount(){
-        let friends=[]
        let current=firebase.auth().currentUser.uid;
-       await firebase.database().ref('/users/'+firebase.auth().currentUser.uid+"/friends").once('value').then(snapshot=>{
-           snapshot.forEach(child=>{
-               this.friends.push({
-                   id:child.key
-               })
-           })
-       });
-        await firebase.database().ref('/users').once('value').then(snapshot=>{
-            snapshot.forEach(child=>{
-                if(current!=child.key && !friends.includes(child.key)) {
-                    this.state.contacts.push({
-                        id: child.key,
-                        email: child.val().email
-                    })
-                }
-            })
-        });
+        let path='/users/'+firebase.auth().currentUser.uid+"/friends";
+        let friends=await loadFromFbase.loadKey(path);
+        let ar=await loadFromFbase.loadIdEmail('/users');
+
+        for(let i=0;i<ar.length;i++){
+            if(current!=ar[i].id && !friends.includes(ar[i].id)) {
+                this.state.contacts.push({
+                    id: ar[i].id,
+                    email: ar[i].email
+                })
+            }
+        }
         this.setState({isLoading:false});
     }
 
-    add(user){
-        firebase.database().ref('users/' + firebase.auth().currentUser.uid+'/friends/'+user.id).set({id:user.id
-            ,email:user.email});
-        firebase.database().ref('users/' + user.id +'/friends/'+ firebase.auth().currentUser.uid).set({id:firebase.auth().currentUser.uid
-            ,email:firebase.auth().currentUser.email});
+    async add(user){
+        let current=firebase.auth().currentUser;
+        let friendPath='users/' + user.id +'/friends/'+ firebase.auth().currentUser.uid;
+        let currentPath='users/' + firebase.auth().currentUser.uid+'/friends/'+user.id;
+        await setInFbase.setFriend(currentPath,current,friendPath,user);
         let copy=[];
         for(let i=0;i<this.state.contacts.length;i++){
             var element=this.state.contacts[i];
@@ -116,66 +113,3 @@ export class AddFriendScreen extends React.Component {
 
 
 }
-const styles = StyleSheet.create({
-    backgroundImage: {
-        flex: 1,
-        width: null,
-        height: null,
-        resizeMode: 'cover'
-    },
-    buttonImage: {
-        opacity:0.7,
-        flex:1,
-        width: 110,
-        height: 110,
-        resizeMode:'cover',
-        alignItems:'baseline',
-    },
-    viewStyle: {
-        alignItems:'baseline',
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'space-between'
-    },
-
-    buttonContainer:{
-        backgroundColor: 'rgba(150,0,150,0.0)',
-        paddingVertical: 15,
-        marginBottom:10,
-        width:110,
-        height:110,
-        alignItems:'center',
-    },
-    textContainer:{
-        backgroundColor: 'rgba(0,255,0,0.7)',
-        paddingVertical:5,
-        marginBottom:2,
-        width:150,
-        height:30,
-        alignItems:'center',
-    },
-
-    buttonStyle:{
-        color: '#0f0',
-        textAlign: 'center',
-        fontWeight: '700'
-    },
-    friendsView: {
-        alignItems:'center',
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'space-between'
-    },
-    bottomView:{
-        opacity:0.7,
-        flex:1,
-        width: 50,
-        height: 50,
-        resizeMode:'cover',
-        alignItems:'baseline',
-        justifyContent: 'center',
-        position: 'absolute',
-        bottom: 0
-
-    }
-});

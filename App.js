@@ -1,5 +1,5 @@
 import React from 'react';
-import { createStackNavigator } from 'react-navigation';
+import { createSwitchNavigator } from 'react-navigation';
 import {HomeScreen } from './pages/home'
 import { LoginScreen } from "./pages/login";
 import {ChatScreen} from "./pages/chats";
@@ -8,11 +8,10 @@ import {AddFriendScreen} from "./pages/addfriend";
 import {ContactScreen} from "./pages/contacts";
 import {LoadingScreen} from "./pages/loading";
 import {InfoScreen} from "./pages/info";
+import {MessegeScreen} from "./pages/message";
 
 
-
-
-const RootStack = createStackNavigator({
+const RootStack = createSwitchNavigator({
         Login: LoginScreen,
         Home: HomeScreen,
         Chats:ChatScreen,
@@ -20,7 +19,8 @@ const RootStack = createStackNavigator({
         Add:AddFriendScreen,
         Contact:ContactScreen,
         Loading:LoadingScreen,
-        Info:InfoScreen
+        Info:InfoScreen,
+        Message:{screen:MessegeScreen}
 },
     {
       IntialName: 'Login',
